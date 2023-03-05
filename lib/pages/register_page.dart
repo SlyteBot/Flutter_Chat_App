@@ -1,27 +1,27 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_project_chat_app/pages/forgot_your_password_page.dart';
-import 'package:flutter_project_chat_app/pages/register_page.dart';
+import 'package:flutter_project_chat_app/pages/home_page.dart';
 import 'package:flutter_project_chat_app/services/auth_service.dart';
-import 'package:flutter_project_chat_app/widgets/widgets.dart';
 
-import 'home_page.dart';
+import '../widgets/widgets.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  String email = "";
+class _RegisterPageState extends State<RegisterPage> {
+  String userName = "";
   String password = "";
-  final _formKey = GlobalKey<FormState>();
+  String email = "";
+  TextEditingController passwordController = TextEditingController();
   bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(backgroundColor: Theme.of(context).primaryColor),
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -37,11 +37,34 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Sign In",
+                          "Register",
                           style: TextStyle(fontSize: 45),
                         ),
                         const SizedBox(
                           height: 50,
+                        ),
+                        TextFormField(
+                          onSaved: (newValue) {
+                            setState(() {
+                              userName = newValue!;
+                            });
+                          },
+                          decoration: textFormDecoration.copyWith(
+                            labelText: "Username:",
+                            prefix: const Icon(Icons.person),
+                          ),
+                          validator: (value) {
+                            if (RegExp(r"^[a-zA-Z0-9]{3,12}$")
+                                    .hasMatch(value!) ==
+                                true) {
+                              return null;
+                            } else {
+                              return "Username not valid!";
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
                         ),
                         TextFormField(
                           decoration: textFormDecoration.copyWith(
@@ -65,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 15,
                         ),
                         TextFormField(
+                          controller: passwordController,
                           obscureText: true,
                           decoration: textFormDecoration.copyWith(
                             labelText: "Password:",
@@ -75,6 +99,30 @@ class _LoginPageState extends State<LoginPage> {
                               password = newValue!;
                             });
                           },
+                          validator: (value) {
+                            if (passwordValid(value!) == true) {
+                              return null;
+                            } else {
+                              return "Password is not valid!";
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextFormField(
+                          obscureText: true,
+                          decoration: textFormDecoration.copyWith(
+                            labelText: "Re-enter Password:",
+                            prefix: const Icon(Icons.password),
+                          ),
+                          validator: (value) {
+                            if (passwordController.text == value) {
+                              return null;
+                            } else {
+                              return "Password is not the same!";
+                            }
+                          },
                         ),
                         const SizedBox(
                           height: 15,
@@ -82,65 +130,19 @@ class _LoginPageState extends State<LoginPage> {
                         Material(
                           child: MaterialButton(
                             onPressed: () {
-                              loginFunction();
+                              registerFunction();
                             },
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(22)),
                             color: Theme.of(context).primaryColor,
                             child: const Text(
-                              "Login",
+                              "Register",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w300,
                                 fontSize: 15,
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            text: "Forgot your password?",
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w900),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ForgotYourPasswordPage()));
-                              },
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            text: "Don't have an account? ",
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: "Register here!",
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w900),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const RegisterPage()));
-                                    }),
-                            ],
                           ),
                         ),
                       ],
@@ -152,15 +154,15 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  loginFunction() async {
+  registerFunction() async {
     final FormState form = _formKey.currentState!;
     if (form.validate()) {
       setState(() {
         _isLoading = true;
       });
-      form.save();
       AuthService authService = AuthService();
-      await authService.loginUser(email, password).then((value) {
+      form.save();
+      await authService.registerUser(email, password, userName).then((value) {
         if (value == true) {
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (builder) => const HomePage()));
