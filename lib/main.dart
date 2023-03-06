@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/firebase_options.dart';
 import 'package:flutter_project_chat_app/pages/login_page.dart';
-import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,12 +9,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  runApp(const Main());
+  runApp(const MyApp());
 }
 
-class Main extends StatelessWidget {
-  const Main({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +23,7 @@ class Main extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
         primaryColor: Colors.black,
+        highlightColor: Colors.teal,
       ),
       home: const LoginPage(),
     );

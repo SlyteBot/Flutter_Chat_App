@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/pages/home_page.dart';
 import 'package:flutter_project_chat_app/services/auth_service.dart';
+import 'package:flutter_project_chat_app/services/database_service.dart';
 
 import '../widgets/widgets.dart';
 
@@ -15,6 +16,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String userName = "";
   String password = "";
   String email = "";
+
   TextEditingController passwordController = TextEditingController();
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -154,14 +156,24 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  registerFunction() async {
+  void registerFunction() async {
     final FormState form = _formKey.currentState!;
     if (form.validate()) {
       setState(() {
         _isLoading = true;
       });
       AuthService authService = AuthService();
+      DatabaseService databaseService = DatabaseService();
       form.save();
+      var result = await databaseService.doesUserExist(userName);
+      if (result == true) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (!context.mounted) return;
+        showSnackbar(context, Colors.red, "Username already exists!");
+        return;
+      }
       await authService.registerUser(email, password, userName).then((value) {
         if (value == true) {
           Navigator.of(context).pushReplacement(

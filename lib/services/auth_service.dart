@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_project_chat_app/services/database_service.dart';
 
 class AuthService {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -24,7 +25,8 @@ class AuthService {
               email: email, password: password))
           .user;
       if (user != null) {
-        //Database
+        DatabaseService dbs = DatabaseService();
+        dbs.addUser(user.uid, userName, user.email!);
         return true;
       } else {
         return false;
