@@ -1,9 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/models/user_model.dart';
 import 'package:flutter_project_chat_app/pages/forgot_your_password_page.dart';
 import 'package:flutter_project_chat_app/pages/register_page.dart';
+import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:flutter_project_chat_app/services/auth_service.dart';
+import 'package:flutter_project_chat_app/services/database_service.dart';
 import 'package:flutter_project_chat_app/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 import 'home_page.dart';
 
@@ -161,7 +165,9 @@ class _LoginPageState extends State<LoginPage> {
       form.save();
       AuthService authService = AuthService();
       await authService.loginUser(email, password).then((value) {
-        if (value == true) {
+        if (value != null) {
+          UserModel user = value;
+          context.read<User>().setUser(user.uid, user.userName, user.email);
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (builder) => const HomePage()));
         } else {

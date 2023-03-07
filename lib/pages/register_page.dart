@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/models/user_model.dart';
 import 'package:flutter_project_chat_app/pages/home_page.dart';
 import 'package:flutter_project_chat_app/services/auth_service.dart';
 import 'package:flutter_project_chat_app/services/database_service.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/user_provider.dart';
 import '../widgets/widgets.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -176,7 +179,9 @@ class _RegisterPageState extends State<RegisterPage> {
         return;
       }
       await authService.registerUser(email, password, userName).then((value) {
-        if (value == true) {
+        if (value != null) {
+          UserModel user = value;
+          context.read<User>().setUser(user.uid, userName, email);
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (builder) => const HomePage()));
         } else {
