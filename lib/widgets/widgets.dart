@@ -12,6 +12,7 @@ const textFormDecoration = InputDecoration(
       borderSide: BorderSide(color: Color(0xFFee7b64), width: 2)),
 );
 
+const listTileStyle = TextStyle(fontSize: 15, fontWeight: FontWeight.w600);
 bool passwordValid(String value) {
   return true;
 }

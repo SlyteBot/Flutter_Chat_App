@@ -170,6 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
         setState(() {
           _isLoading = false;
         });
+        // ignore: use_build_context_synchronously
         if (!context.mounted) return;
         showSnackbar(context, Colors.red, "Username already exists!");
         return;

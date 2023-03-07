@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/pages/friends_page.dart';
-import 'package:flutter_project_chat_app/pages/requests_page.dart';
-import 'package:flutter_project_chat_app/services/auth_service.dart';
+import 'package:flutter_project_chat_app/pages/home_page.dart';
 
+import '../services/auth_service.dart';
 import '../widgets/widgets.dart';
 import 'login_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class RequestsPage extends StatefulWidget {
+  const RequestsPage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<RequestsPage> createState() => _RequestsPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _RequestsPageState extends State<RequestsPage> {
+  addUserAsFriend() {}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
+        actions: [
+          IconButton(
+              onPressed: () {
+                addUserAsFriend();
+              },
+              icon: const Icon(Icons.add))
+        ],
       ),
       drawer: Drawer(
         child: SafeArea(
@@ -61,8 +69,12 @@ class _HomePageState extends State<HomePage> {
               ListTileTheme(
                 selectedColor: Theme.of(context).highlightColor,
                 child: ListTile(
-                  onTap: () {},
-                  selected: true,
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
+                        (route) => false);
+                  },
                   leading: const Icon(Icons.message),
                   iconColor: Theme.of(context).primaryColor,
                   title: Text(
@@ -93,13 +105,9 @@ class _HomePageState extends State<HomePage> {
               ListTileTheme(
                 selectedColor: Theme.of(context).highlightColor,
                 child: ListTile(
-                  onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const RequestsPage()),
-                        (route) => false);
-                  },
+                  onTap: () {},
                   leading: const Icon(Icons.contact_mail),
+                  selected: true,
                   iconColor: Theme.of(context).primaryColor,
                   title: Text(
                     "Requests",
