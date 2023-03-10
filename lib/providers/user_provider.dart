@@ -1,17 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/services/database_service.dart';
 
-class User with ChangeNotifier {
-  String _userName = "";
-  String _uid = "";
-  String _email = "";
+import '../models/user_model.dart';
+import '../services/auth_service.dart';
 
-  String get userName => _userName;
-  String get uid => _uid;
-  String get email => _email;
-  void setUser(String uid, String userName, String email) {
-    _userName = userName;
-    _uid = _uid;
-    _email = email;
-    notifyListeners();
+class UserProvider with ChangeNotifier {
+  UserModel? _userData;
+  bool _isAuthenticated = false;
+  UserProvider();
+
+  Future signIn(String email, String password) async {
+    AuthService authService = AuthService();
+
+    String? returnValue = "";
+    await authService.loginUser(email, password).then((value) {
+      if (value is UserModel) {
+        _userData = value;
+        _isAuthenticated = true;
+        returnValue = null;
+      } else {
+        _isAuthenticated = false;
+        returnValue = value;
+      }
+    });
+    return returnValue;
+  }
+
+  Future register(String userName, String email, String password) async {
+    AuthService authService = AuthService();
+    String? returnValue = "";
+    await authService.registerUser(email, password, userName).then((value) {
+      if (value is UserModel) {
+        _userData = value;
+        _isAuthenticated = true;
+        returnValue = null;
+      } else {
+        _isAuthenticated = false;
+        returnValue = value;
+      }
+    });
+    return returnValue;
+  }
+
+  Future sendResetPassword(String email) async {
+    AuthService authService = AuthService();
+    var result = await authService.forgotPasswordEmail(email);
+
+    return result;
+  }
+
+  String getUsername() {
+    return _userData!.userName;
+  }
+
+  String getUID() {
+    return _userData!.uid;
+  }
+
+  bool isAuthenticated() {
+    return _isAuthenticated;
   }
 }

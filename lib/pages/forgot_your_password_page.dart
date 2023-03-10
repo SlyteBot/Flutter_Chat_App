@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
 import '../widgets/widgets.dart';
@@ -95,9 +97,9 @@ class _ForgotYourPasswordPageState extends State<ForgotYourPasswordPage> {
     final FormState form = _formKey.currentState!;
     if (form.validate()) {
       form.save();
-      AuthService authService = AuthService();
-      await authService.forgotPasswordEmail(email).then((value) {
-        if (value == true) {
+
+      await context.read<UserProvider>().sendResetPassword(email).then((value) {
+        if (value == null) {
           showSnackbar(context, Colors.green, "Reset password link sent!");
         } else {
           showSnackbar(context, Colors.red, value);

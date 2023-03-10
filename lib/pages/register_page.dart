@@ -165,23 +165,15 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _isLoading = true;
       });
-      AuthService authService = AuthService();
-      DatabaseService databaseService = DatabaseService();
+
       form.save();
-      var result = await databaseService.doesUserExist(userName);
-      if (result == true) {
-        setState(() {
-          _isLoading = false;
-        });
-        // ignore: use_build_context_synchronously
-        if (!context.mounted) return;
-        showSnackbar(context, Colors.red, "Username already exists!");
-        return;
-      }
-      await authService.registerUser(email, password, userName).then((value) {
-        if (value != null) {
-          UserModel user = value;
-          context.read<User>().setUser(user.uid, userName, email);
+      passwordController.text = "";
+
+      await context
+          .read<UserProvider>()
+          .register(userName, email, password)
+          .then((value) {
+        if (value == null) {
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (builder) => const HomePage()));
         } else {

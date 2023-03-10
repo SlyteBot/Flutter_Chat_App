@@ -25,12 +25,16 @@ class AuthService {
 
   Future registerUser(String email, String password, String userName) async {
     try {
+      DatabaseService databaseService = DatabaseService();
+      bool exists = await databaseService.doesUserExist(userName);
+      if (exists == true) {
+        return "Username already exists";
+      }
       User? user = (await firebaseAuth.createUserWithEmailAndPassword(
               email: email, password: password))
           .user;
       if (user != null) {
-        DatabaseService dbs = DatabaseService();
-        dbs.addUser(user.uid, userName, user.email!);
+        databaseService.addUser(user.uid, userName, user.email!);
         return UserModel(uid: user.uid, userName: userName, email: user.email!);
       } else {
         return null;
@@ -43,7 +47,7 @@ class AuthService {
   Future forgotPasswordEmail(String email) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
-      return true;
+      return null;
     } on FirebaseAuthException catch (e) {
       return e.message;
     }

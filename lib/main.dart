@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/providers/friend_provider.dart';
+import 'package:flutter_project_chat_app/providers/request_provider.dart';
 import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_project_chat_app/firebase_options.dart';
@@ -12,7 +14,11 @@ void main() async {
   );
 
   runApp(MultiProvider(
-    providers: [ChangeNotifierProvider(create: (context) => User())],
+    providers: [
+      ChangeNotifierProvider(create: (context) => UserProvider()),
+      ChangeNotifierProvider(create: (context) => FriendProvider()),
+      ChangeNotifierProvider(create: (context) => RequestProvider()),
+    ],
     child: const MyApp(),
   ));
 }

@@ -9,7 +9,8 @@ class Requests {
   static const collectionName = "friend_requests";
   static const senderUid = "sender";
   static const receiverUid = "receiver";
-  static const date = "timestamp";
+  static const accepted = "accepted";
+  static const acknowleged = "acknowleged";
 }
 
 class Friends {

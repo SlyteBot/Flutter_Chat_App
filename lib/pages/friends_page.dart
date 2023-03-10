@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/pages/login_page.dart';
 import 'package:flutter_project_chat_app/pages/requests_page.dart';
+import 'package:flutter_project_chat_app/providers/friend_provider.dart';
+import 'package:flutter_project_chat_app/providers/request_provider.dart';
+import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:flutter_project_chat_app/services/database_service.dart';
 import 'package:flutter_project_chat_app/widgets/drawer_for_loggedin.dart';
+import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
 import '../widgets/widgets.dart';
@@ -67,7 +71,8 @@ class _FriendsPageState extends State<FriendsPage> {
                   child: MaterialButton(
                     color: Theme.of(context).primaryColor,
                     onPressed: () {
-                      print(userName);
+                      Navigator.of(context).pop();
+                      sendRequest(userName);
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(22)),
@@ -85,11 +90,19 @@ class _FriendsPageState extends State<FriendsPage> {
             ),
           );
         });
-    addUserAsFriend(userName);
   }
 
-  void addUserAsFriend(String userName) {
-    DatabaseService databaseService = DatabaseService();
+  sendRequest(String userName) {
+    context
+        .read<RequestProvider>()
+        .sendRequest(context.read<UserProvider>().getUID(), userName)
+        .then((result) {
+      if (result == true) {
+        showSnackbar(context, Colors.green, "Request sent succesfully!");
+      } else {
+        showSnackbar(context, Colors.red, "Request wasn't sent!");
+      }
+    });
   }
 
   @override

@@ -11,7 +11,7 @@ import '../services/auth_service.dart';
 
 getDrawer(int index, context) {
   final pagesIndex = [0, 1, 2];
-  String userName = Provider.of<User>(context).userName;
+  String userName = Provider.of<UserProvider>(context).getUsername();
   return Drawer(
     child: SafeArea(
       child: ListView(
