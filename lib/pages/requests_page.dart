@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/models/requests_model.dart';
 import 'package:flutter_project_chat_app/pages/friends_page.dart';
 import 'package:flutter_project_chat_app/pages/home_page.dart';
 import 'package:flutter_project_chat_app/widgets/drawer_for_loggedin.dart';
+import 'package:flutter_project_chat_app/widgets/request_tile.dart';
 
 import '../services/auth_service.dart';
 import '../widgets/widgets.dart';
@@ -31,19 +33,51 @@ class _RequestsPageState extends State<RequestsPage> {
         ],
       ),
       drawer: getDrawer(index, context),
-      body: SafeArea(
-        child: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.signOutUser();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                  (route) => false);
-            },
-            child: const Text("Logut"),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          RequestTile(
+            request: RequestModel(
+                receiverUid: "1234",
+                senderUid: "4312",
+                accepted: false,
+                acknowleged: false),
           ),
-        ),
+          RequestTile(
+            request: RequestModel(
+                receiverUid: "1234",
+                senderUid: "4312",
+                accepted: false,
+                acknowleged: false),
+          ),
+          RequestTile(
+            request: RequestModel(
+                receiverUid: "1234",
+                senderUid: "4312",
+                accepted: false,
+                acknowleged: false),
+          ),
+          RequestTile(
+            request: RequestModel(
+                receiverUid: "1234",
+                senderUid: "4312",
+                accepted: false,
+                acknowleged: false),
+          ),
+          RequestTile(
+            request: RequestModel(
+                receiverUid: "1234",
+                senderUid: "4312",
+                accepted: false,
+                acknowleged: false),
+          ),
+          RequestTile(
+            request: RequestModel(
+                receiverUid: "1234",
+                senderUid: "4312",
+                accepted: false,
+                acknowleged: false),
+          ),
+        ]),
       ),
     );
   }
