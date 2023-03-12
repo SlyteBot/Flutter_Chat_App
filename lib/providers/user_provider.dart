@@ -60,4 +60,8 @@ class UserProvider with ChangeNotifier {
   bool isAuthenticated() {
     return _isAuthenticated;
   }
+
+  bool isUserNameValid() {
+    return true;
+  }
 }

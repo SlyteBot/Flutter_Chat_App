@@ -50,14 +50,11 @@ class DatabaseService {
   }
 
   Future<bool> sendRequest(String senderUid, String userName) async {
-    final usersRef = db.collection(Users.collectionName);
-    final query = usersRef.where(Users.userName, isEqualTo: userName);
-    final querySnapshot = await query.get();
-    if (querySnapshot.size == 0) {
+    final receiverUid = await getUID(userName);
+
+    if (receiverUid == null) {
       return false;
     }
-    final receiverUid = querySnapshot.docs[0].get(Users.uid);
-
     final request = RequestModel(
             senderUid: senderUid,
             receiverUid: receiverUid,
@@ -66,5 +63,12 @@ class DatabaseService {
         .firestoreModel();
     await db.collection(Requests.collectionName).add(request);
     return true;
+  }
+
+  getRequestNotAcknowlgedSnapShot() {
+    return db
+        .collection(Requests.collectionName)
+        .where(Requests.acknowleged, isEqualTo: false)
+        .snapshots();
   }
 }

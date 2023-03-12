@@ -3,7 +3,9 @@ import 'package:flutter_project_chat_app/models/requests_model.dart';
 
 class RequestTile extends StatefulWidget {
   final RequestModel request;
-  const RequestTile({Key? key, required this.request}) : super(key: key);
+  final String userName;
+  const RequestTile({Key? key, required this.request, required this.userName})
+      : super(key: key);
 
   @override
   State<RequestTile> createState() => _RequestTileState();
@@ -18,32 +20,39 @@ class _RequestTileState extends State<RequestTile> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.person_2_rounded,
             size: 35,
           ),
-          Text(
-            "Username",
-            style: TextStyle(fontSize: 35),
-          ),
           SizedBox(
-            width: 50,
-          ),
-          FilledButton(
-            onPressed: () {},
-            child: Icon(Icons.check),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          FilledButton(
-            style: ButtonStyle(),
-            onPressed: () {},
-            child: Icon(
-              Icons.cancel,
-              color: Colors.red,
+            width: MediaQuery.of(context).size.width / 2,
+            child: Text(
+              widget.userName,
+              style: const TextStyle(fontSize: 35),
+              textWidthBasis: TextWidthBasis.parent,
             ),
-          )
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(backgroundColor: Colors.white),
+              onPressed: () {},
+              child: const Icon(
+                Icons.check,
+                color: Colors.green,
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(backgroundColor: Colors.black),
+              onPressed: () {},
+              child: const Icon(
+                Icons.cancel,
+                color: Colors.red,
+              ),
+            )
+          ]),
         ],
       ),
     );

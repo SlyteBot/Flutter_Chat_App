@@ -41,6 +41,7 @@ class _RequestsPageState extends State<RequestsPage> {
                 senderUid: "4312",
                 accepted: false,
                 acknowleged: false),
+            userName: "Slyte3",
           ),
           RequestTile(
             request: RequestModel(
@@ -48,6 +49,7 @@ class _RequestsPageState extends State<RequestsPage> {
                 senderUid: "4312",
                 accepted: false,
                 acknowleged: false),
+            userName: "LMAO21311112131423432432",
           ),
           RequestTile(
             request: RequestModel(
@@ -55,6 +57,7 @@ class _RequestsPageState extends State<RequestsPage> {
                 senderUid: "4312",
                 accepted: false,
                 acknowleged: false),
+            userName: "LMAO21311112131423432432",
           ),
           RequestTile(
             request: RequestModel(
@@ -62,6 +65,7 @@ class _RequestsPageState extends State<RequestsPage> {
                 senderUid: "4312",
                 accepted: false,
                 acknowleged: false),
+            userName: "LMAO21311112131423432432",
           ),
           RequestTile(
             request: RequestModel(
@@ -69,6 +73,7 @@ class _RequestsPageState extends State<RequestsPage> {
                 senderUid: "4312",
                 accepted: false,
                 acknowleged: false),
+            userName: "LMAO21311112131423432432",
           ),
           RequestTile(
             request: RequestModel(
@@ -76,6 +81,7 @@ class _RequestsPageState extends State<RequestsPage> {
                 senderUid: "4312",
                 accepted: false,
                 acknowleged: false),
+            userName: "LMAO21311112131423432432",
           ),
         ]),
       ),
