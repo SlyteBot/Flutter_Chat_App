@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/consts/collections_const.dart';
 import 'package:flutter_project_chat_app/pages/login_page.dart';
 import 'package:flutter_project_chat_app/pages/requests_page.dart';
 import 'package:flutter_project_chat_app/providers/friend_provider.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_project_chat_app/providers/request_provider.dart';
 import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:flutter_project_chat_app/services/database_service.dart';
 import 'package:flutter_project_chat_app/widgets/drawer_for_loggedin.dart';
+import 'package:flutter_project_chat_app/widgets/friend_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
@@ -21,8 +24,22 @@ class FriendsPage extends StatefulWidget {
 
 class _FriendsPageState extends State<FriendsPage> {
   static const index = 1;
+  late Stream<QuerySnapshot> friends;
+  List<Widget> friendTiles = [];
 
-  void addFriendDialog() {
+  getFriendsSnapshot() {
+    friends = context
+        .read<FriendProvider>()
+        .fetch(context.read<UserProvider>().getUID());
+  }
+
+  @override
+  void initState() {
+    getFriendsSnapshot();
+    super.initState();
+  }
+
+  void addFriendDialog(BuildContext context) {
     String userName = "";
     showDialog(
         context: context,
@@ -41,9 +58,7 @@ class _FriendsPageState extends State<FriendsPage> {
                 children: [
                   TextField(
                     onChanged: (value) {
-                      setState(() {
-                        userName = value;
-                      });
+                      userName = value;
                     },
                   ),
                 ],
@@ -113,24 +128,34 @@ class _FriendsPageState extends State<FriendsPage> {
         actions: [
           IconButton(
               onPressed: () {
-                addFriendDialog();
+                addFriendDialog(context);
               },
               icon: const Icon(Icons.add))
         ],
       ),
       drawer: getDrawer(index, context),
       body: SafeArea(
-        child: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              AuthService authService = AuthService();
-              authService.signOutUser();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                  (route) => false);
-            },
-            child: const Text("Logut"),
-          ),
+        child: StreamBuilder(
+          stream: friends,
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ));
+            }
+            if (snapshot.hasData) {
+              friendTiles.clear();
+              Map map = snapshot.data!.docs[0].get(Friends.friendList);
+              for (String friendUid in map.keys) {
+                final friendInstance = FriendTile(friendUid: friendUid);
+                friendTiles.add(friendInstance);
+              }
+            }
+            return SingleChildScrollView(
+              child: Column(children: friendTiles),
+            );
+          },
         ),
       ),
     );

@@ -23,4 +23,12 @@ class RequestModel {
       Requests.acknowleged: acknowleged
     };
   }
+
+  acceptedRequest() {
+    accepted = true;
+  }
+
+  acknowlegedRequest() {
+    acknowleged = true;
+  }
 }

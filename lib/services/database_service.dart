@@ -49,6 +49,14 @@ class DatabaseService {
     return user.get(Users.userName);
   }
 
+  Future<bool> updateRequest(RequestModel request) async {
+    db
+        .collection(Requests.collectionName)
+        .doc(request.documentId)
+        .update(request.firestoreModel());
+    return true;
+  }
+
   Future<bool> sendRequest(String senderUid, String userName) async {
     final receiverUid = await getUID(userName);
 
@@ -56,11 +64,15 @@ class DatabaseService {
       return false;
     }
     final requestRef = db.collection(Requests.collectionName);
-    final querySnapshot = await requestRef
+    final querySnapshot1 = await requestRef
         .where(Requests.senderUid, isEqualTo: senderUid)
         .where(Requests.receiverUid, isEqualTo: receiverUid)
         .get();
-    if (querySnapshot.size > 0) {
+    final querySnapshot2 = await requestRef
+        .where(Requests.senderUid, isEqualTo: receiverUid)
+        .where(Requests.receiverUid, isEqualTo: senderUid)
+        .get();
+    if (querySnapshot1.size > 0 || querySnapshot2.size > 0) {
       return false;
     }
     final request = RequestModel(
@@ -78,6 +90,30 @@ class DatabaseService {
         .collection(Requests.collectionName)
         .where(Requests.receiverUid, isEqualTo: uid)
         .where(Requests.acknowleged, isEqualTo: false)
+        .snapshots();
+  }
+
+  addFriend(String userUid, String friendUid) {
+    final friendRef = db.collection(Friends.collectionName);
+
+    friendRef
+        .where(Friends.currentUid, isEqualTo: userUid)
+        .get()
+        .then((querySnapshot) {
+      if (querySnapshot.size == 0) {
+        return;
+      }
+      final document = querySnapshot.docs[0];
+      final map = document.get(Friends.friendList);
+      map[friendUid] = true;
+      friendRef.doc(document.id).update({Friends.friendList: map});
+    });
+  }
+
+  getFriendsSnapshot(String uid) {
+    return db
+        .collection(Friends.collectionName)
+        .where(Friends.currentUid, isEqualTo: uid)
         .snapshots();
   }
 }

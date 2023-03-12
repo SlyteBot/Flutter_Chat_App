@@ -35,7 +35,87 @@ class _RequestsPageState extends State<RequestsPage> {
         .fetch(context.read<UserProvider>().getUID());
   }
 
-  addUserAsFriend() {}
+  void addFriendDialog(BuildContext context) {
+    String userName = "";
+    showDialog(
+        context: context,
+        builder: (context) {
+          return GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: AlertDialog(
+              title: const Text(
+                "Add a friend by their username!",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      userName = value;
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                Material(
+                  child: MaterialButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22)),
+                    color: Theme.of(context).primaryColor,
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                Material(
+                  child: MaterialButton(
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      sendRequest(userName);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22)),
+                    child: const Text(
+                      "Add",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  sendRequest(String userName) {
+    context
+        .read<RequestProvider>()
+        .sendRequest(context.read<UserProvider>().getUID(), userName)
+        .then((result) {
+      if (result == true) {
+        showSnackbar(context, Colors.green, "Request sent succesfully!");
+      } else {
+        showSnackbar(context, Colors.red, "Request wasn't sent!");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,38 +124,41 @@ class _RequestsPageState extends State<RequestsPage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  addUserAsFriend();
+                  addFriendDialog(context);
                 },
                 icon: const Icon(Icons.add))
           ],
         ),
         drawer: getDrawer(index, context),
-        body: StreamBuilder(
-            stream: requests,
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                    child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
-                ));
-              }
-              if (snapshot.hasData) {
-                for (int i = 0; i < snapshot.data!.docs.length; ++i) {
-                  var document = snapshot.data!.docs[i];
-                  final requestInstance = RequestTile(
-                      request: RequestModel(
-                    senderUid: document.get(Requests.senderUid),
-                    receiverUid: document.get(Requests.receiverUid),
-                    accepted: document.get(Requests.accepted),
-                    acknowleged: document.get(Requests.acknowleged),
-                    documentId: document.id,
+        body: SafeArea(
+          child: StreamBuilder(
+              stream: requests,
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
                   ));
-                  requestTiles.add(requestInstance);
                 }
-              }
-              return SingleChildScrollView(
-                child: Column(children: requestTiles),
-              );
-            }));
+                if (snapshot.hasData) {
+                  requestTiles.clear();
+                  for (int i = 0; i < snapshot.data!.docs.length; ++i) {
+                    var document = snapshot.data!.docs[i];
+                    final requestInstance = RequestTile(
+                        request: RequestModel(
+                      senderUid: document.get(Requests.senderUid),
+                      receiverUid: document.get(Requests.receiverUid),
+                      accepted: document.get(Requests.accepted),
+                      acknowleged: document.get(Requests.acknowleged),
+                      documentId: document.id,
+                    ));
+                    requestTiles.add(requestInstance);
+                  }
+                }
+                return SingleChildScrollView(
+                  child: Column(children: requestTiles),
+                );
+              }),
+        ));
   }
 }

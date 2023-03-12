@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/models/requests_model.dart';
+import 'package:flutter_project_chat_app/providers/request_provider.dart';
 import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -56,7 +57,9 @@ class _RequestTileState extends State<RequestTile> {
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             OutlinedButton(
               style: OutlinedButton.styleFrom(backgroundColor: Colors.white),
-              onPressed: () {},
+              onPressed: () {
+                context.read<RequestProvider>().acceptRequest(widget.request);
+              },
               child: const Icon(
                 Icons.check,
                 color: Colors.green,
@@ -67,7 +70,9 @@ class _RequestTileState extends State<RequestTile> {
             ),
             OutlinedButton(
               style: OutlinedButton.styleFrom(backgroundColor: Colors.black),
-              onPressed: () {},
+              onPressed: () {
+                context.read<RequestProvider>().denyRequest(widget.request);
+              },
               child: const Icon(
                 Icons.cancel,
                 color: Colors.red,
