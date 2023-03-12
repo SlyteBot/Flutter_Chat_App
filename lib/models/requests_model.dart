@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../consts/collections_const.dart';
 
 class RequestModel {
+  String? documentId;
   String senderUid;
   String receiverUid;
   bool accepted;
@@ -9,7 +12,8 @@ class RequestModel {
       {required this.senderUid,
       required this.receiverUid,
       required this.accepted,
-      required this.acknowleged});
+      required this.acknowleged,
+      this.documentId});
 
   firestoreModel() {
     return {

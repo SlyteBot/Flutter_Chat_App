@@ -4,9 +4,9 @@ import 'package:flutter_project_chat_app/services/database_service.dart';
 class RequestProvider with ChangeNotifier {
   RequestProvider();
 
-  fetch() {
+  fetch(String uid) {
     DatabaseService databaseService = DatabaseService();
-    return databaseService.getRequestNotAcknowlgedSnapShot();
+    return databaseService.getRequestNotAcknowlgedSnapShot(uid);
   }
 
   get(int index) {}

@@ -1,17 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/models/requests_model.dart';
+import 'package:flutter_project_chat_app/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class RequestTile extends StatefulWidget {
   final RequestModel request;
-  final String userName;
-  const RequestTile({Key? key, required this.request, required this.userName})
-      : super(key: key);
+
+  const RequestTile({Key? key, required this.request}) : super(key: key);
 
   @override
   State<RequestTile> createState() => _RequestTileState();
 }
 
 class _RequestTileState extends State<RequestTile> {
+  String username = "";
+
+  getUsername() {
+    context
+        .read<UserProvider>()
+        .getUsernameByUid(widget.request.senderUid)
+        .then((value) {
+      setState(() {
+        username = value!;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    getUsername();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,7 +48,7 @@ class _RequestTileState extends State<RequestTile> {
           SizedBox(
             width: MediaQuery.of(context).size.width / 2,
             child: Text(
-              widget.userName,
+              username,
               style: const TextStyle(fontSize: 35),
               textWidthBasis: TextWidthBasis.parent,
             ),

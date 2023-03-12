@@ -13,7 +13,7 @@ class AuthService {
       DatabaseService databaseService = DatabaseService();
 
       if (user != null) {
-        String username = await databaseService.getUsername(user.uid);
+        String username = (await databaseService.getUsername(user.uid))!;
         return UserModel(uid: user.uid, userName: username, email: email);
       } else {
         return null;

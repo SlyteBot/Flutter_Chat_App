@@ -49,6 +49,11 @@ class UserProvider with ChangeNotifier {
     return result;
   }
 
+  Future<String?> getUsernameByUid(String uid) async {
+    DatabaseService databaseService = DatabaseService();
+    return await databaseService.getUsername(uid);
+  }
+
   String getUsername() {
     return _userData!.userName;
   }
