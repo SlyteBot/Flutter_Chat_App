@@ -140,24 +140,30 @@ class _RequestsPageState extends State<RequestsPage> {
                     color: Theme.of(context).primaryColor,
                   ));
                 }
+
                 if (snapshot.hasData) {
-                  requestTiles.clear();
-                  for (int i = 0; i < snapshot.data!.docs.length; ++i) {
-                    var document = snapshot.data!.docs[i];
-                    final requestInstance = RequestTile(
-                        request: RequestModel(
-                      senderUid: document.get(Requests.senderUid),
-                      receiverUid: document.get(Requests.receiverUid),
-                      accepted: document.get(Requests.accepted),
-                      acknowleged: document.get(Requests.acknowleged),
-                      documentId: document.id,
-                    ));
-                    requestTiles.add(requestInstance);
+                  if (snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text("You have no requests"));
                   }
+                  return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        return RequestTile(
+                            request: RequestModel(
+                          senderUid: snapshot.data!.docs[index]
+                              .get(Requests.senderUid),
+                          receiverUid: snapshot.data!.docs[index]
+                              .get(Requests.receiverUid),
+                          accepted:
+                              snapshot.data!.docs[index].get(Requests.accepted),
+                          acknowleged: snapshot.data!.docs[index]
+                              .get(Requests.acknowleged),
+                          documentId: snapshot.data!.docs[index].id,
+                        ));
+                      });
+                } else {
+                  return const Center(child: Text("You have no requests"));
                 }
-                return SingleChildScrollView(
-                  child: Column(children: requestTiles),
-                );
               }),
         ));
   }
