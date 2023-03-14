@@ -22,7 +22,6 @@ class RequestsPage extends StatefulWidget {
 class _RequestsPageState extends State<RequestsPage> {
   static const index = 2;
   late Stream<QuerySnapshot> requests;
-  List<Widget> requestTiles = [];
   @override
   void initState() {
     requests = getSnapshot();
@@ -143,7 +142,7 @@ class _RequestsPageState extends State<RequestsPage> {
 
                 if (snapshot.hasData) {
                   if (snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text("You have no requests"));
+                    return const Center(child: Text("You have no requests!"));
                   }
                   return ListView.builder(
                       itemCount: snapshot.data!.docs.length,
@@ -162,7 +161,7 @@ class _RequestsPageState extends State<RequestsPage> {
                         ));
                       });
                 } else {
-                  return const Center(child: Text("You have no requests"));
+                  return const Center(child: Text("You have no requests!"));
                 }
               }),
         ));
