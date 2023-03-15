@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/pages/chat_page.dart';
 import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -81,6 +82,8 @@ class _FriendTileState extends State<FriendTile> {
           ),
           OutlinedButton(
               onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const ChatPage()));
                 //Navigate to chat screen with the selected user paramater
               },
               child: const Icon(Icons.add)),
