@@ -7,6 +7,7 @@ class RequestProvider with ChangeNotifier {
 
   fetch(String userUid) {
     DatabaseService databaseService = DatabaseService();
+    databaseService.deleteRequestsAndAddFriends(userUid);
     return databaseService.getRequestNotAcknowlgedSnapShot(userUid);
   }
 

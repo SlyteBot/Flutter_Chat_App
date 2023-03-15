@@ -6,6 +6,7 @@ class FriendProvider with ChangeNotifier {
 
   fetch(String userUid) {
     DatabaseService databaseService = DatabaseService();
+    databaseService.deleteRequestsAndAddFriends(userUid);
     return databaseService.getFriendsSnapshot(userUid);
   }
 }
