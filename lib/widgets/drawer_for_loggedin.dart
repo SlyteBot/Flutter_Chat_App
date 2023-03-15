@@ -140,8 +140,7 @@ getDrawer(int index, context) {
                               )),
                           IconButton(
                               onPressed: () {
-                                AuthService authService = AuthService();
-                                authService.signOutUser();
+                                context.read<UserProvider>().signOut();
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
                                         builder: (context) =>

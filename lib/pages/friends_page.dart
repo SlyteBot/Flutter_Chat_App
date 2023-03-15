@@ -25,7 +25,6 @@ class FriendsPage extends StatefulWidget {
 class _FriendsPageState extends State<FriendsPage> {
   static const index = 1;
   late Stream<QuerySnapshot> friends;
-  List<Widget> friendTiles = [];
 
   getFriendsSnapshot() {
     friends = context
@@ -145,15 +144,24 @@ class _FriendsPageState extends State<FriendsPage> {
               ));
             }
             if (snapshot.hasData) {
-              friendTiles.clear();
               Map map = snapshot.data!.docs[0].get(Friends.friendList);
-              for (String friendUid in map.keys) {
-                final friendInstance = FriendTile(friendUid: friendUid);
-                friendTiles.add(friendInstance);
+              List friendsList = map.keys.toList();
+              if (friendsList.isNotEmpty) {
+                return ListView.builder(
+                    itemCount: friendsList.length,
+                    itemBuilder: (context, index) {
+                      return FriendTile(
+                        friendUid: friendsList[index],
+                      );
+                    });
+              } else {
+                return const Center(
+                  child: Text("You have no friends!"),
+                );
               }
             }
-            return SingleChildScrollView(
-              child: Column(children: friendTiles),
+            return const Center(
+              child: Text("You have no friends!"),
             );
           },
         ),

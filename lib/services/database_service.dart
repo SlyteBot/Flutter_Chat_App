@@ -110,6 +110,22 @@ class DatabaseService {
     });
   }
 
+  deleteRequestsAndAddFriends(String userUid) async {
+    final requestRef = db.collection(Requests.collectionName);
+
+    final acknowlegedRequests = await requestRef
+        .where(Requests.senderUid, isEqualTo: userUid)
+        .where(Requests.acknowleged, isEqualTo: true)
+        .get();
+
+    for (final document in acknowlegedRequests.docs) {
+      if (document.get(Requests.accepted) == true) {
+        await addFriend(userUid, document.get(Requests.receiverUid));
+      }
+      requestRef.doc(document.id).delete();
+    }
+  }
+
   getFriendsSnapshot(String uid) {
     return db
         .collection(Friends.collectionName)

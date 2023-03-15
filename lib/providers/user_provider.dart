@@ -49,6 +49,11 @@ class UserProvider with ChangeNotifier {
     return result;
   }
 
+  Future signOut() async {
+    AuthService authService = AuthService();
+    return await authService.signOutUser();
+  }
+
   Future<String?> getUsernameByUid(String uid) async {
     DatabaseService databaseService = DatabaseService();
     return await databaseService.getUsername(uid);
