@@ -9,4 +9,8 @@ class FriendProvider with ChangeNotifier {
     databaseService.deleteRequestsAndAddFriends(userUid);
     return databaseService.getFriendsSnapshot(userUid);
   }
+
+  deleteFriend(String friendUid) {}
+
+  startChat(String friendUid) {}
 }
