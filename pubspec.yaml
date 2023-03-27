@@ -30,11 +30,12 @@ environment:
 dependencies:
   cryptography: ^2.3.0
   cryptography_flutter: ^2.2.0
-  firebase_core: ^2.7.0
-  firebase_auth: ^4.2.9
-  firebase_storage: ^11.0.14
+  firebase_core: ^2.8.0
+  firebase_auth: ^4.3.0
+  firebase_storage: ^11.0.16
   flutter_secure_storage: ^8.0.0
   provider: ^6.0.5
+  intl: ^0.17.0
   flutter:
     sdk: flutter
 

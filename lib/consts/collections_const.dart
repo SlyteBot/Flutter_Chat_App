@@ -18,3 +18,16 @@ class Friends {
   static const currentUid = "uid";
   static const friendList = "friendList";
 }
+
+class Chats {
+  static const collectionName = "chats";
+  static const name = "name";
+  static const members = "members";
+}
+
+class Messages {
+  static const collectionName = "messages";
+  static const senderUid = "senderUid";
+  static const message = "message";
+  static const timeStamp = "timeStamp";
+}

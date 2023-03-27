@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_project_chat_app/consts/collections_const.dart';
+import 'package:flutter_project_chat_app/models/chat_model.dart';
 import 'package:flutter_project_chat_app/models/friendlist_model.dart';
+import 'package:flutter_project_chat_app/models/message_model.dart';
 import 'package:flutter_project_chat_app/models/requests_model.dart';
 import 'package:flutter_project_chat_app/models/user_model.dart';
 
@@ -131,5 +133,23 @@ class DatabaseService {
         .collection(Friends.collectionName)
         .where(Friends.currentUid, isEqualTo: uid)
         .snapshots();
+  }
+
+  createChat(String userUid, String friendUid) async {
+    var chat = await db.collection(Chats.collectionName).add(ChatModel(
+          members: [userUid, friendUid],
+          name: "",
+        ).firestoreModel());
+    return chat.id;
+  }
+
+  sendMessageToChat(String userUid, String chatId, String message) {
+    db
+        .collection(Chats.collectionName)
+        .doc(chatId)
+        .collection(Messages.collectionName)
+        .add(MessageModel(
+                timeStamp: DateTime.now(), senderUid: userUid, message: message)
+            .firestoreModel());
   }
 }

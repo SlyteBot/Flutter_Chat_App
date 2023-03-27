@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/models/message_model.dart';
+import 'package:flutter_project_chat_app/widgets/message_tile.dart';
 import 'package:flutter_project_chat_app/widgets/messagechat_tile.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  final String chatId;
+  const ChatPage({Key? key, required this.chatId}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -11,6 +14,10 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
+    MessageModel data = MessageModel(
+        timeStamp: DateTime.now().subtract(const Duration(days: 1)),
+        senderUid: "test",
+        message: "Pelda uzenet");
     return Scaffold(
       bottomSheet: const MessageChatTile(),
       appBar: AppBar(
@@ -29,67 +36,29 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Column(children: const [
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-          Text("Elso uzenet"),
-          Text("Masodik uzenet"),
-        ]),
+          child: SizedBox(
+        height: MediaQuery.of(context).size.height / 1.35,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: false),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: false),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: false),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: false),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: true),
+              MessageTile(messageData: data, sendByMe: false),
+              MessageTile(messageData: data, sendByMe: true),
+            ],
+          ),
+        ),
       )),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/pages/chat_page.dart';
+import 'package:flutter_project_chat_app/providers/chat_provider.dart';
+import 'package:flutter_project_chat_app/providers/friend_provider.dart';
 import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -56,7 +58,11 @@ class _FriendTileState extends State<FriendTile> {
                         color: Colors.red,
                       )),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<FriendProvider>().deleteFriend(
+                            context.read<UserProvider>().getUID(),
+                            widget.friendUid);
+                      },
                       icon: const Icon(
                         Icons.done,
                         color: Colors.green,
@@ -81,14 +87,23 @@ class _FriendTileState extends State<FriendTile> {
             ),
           ),
           OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const ChatPage()));
+              onPressed: () async {
+                String chatId = await context.read<FriendProvider>().startChat(
+                    context.read<UserProvider>().getUID(), widget.friendUid);
+                switchToChat(chatId);
                 //Navigate to chat screen with the selected user paramater
               },
               child: const Icon(Icons.add)),
         ]),
       ),
     );
+  }
+
+  switchToChat(String chatId) {
+    context.read<ChatProvider>().setChatId(chatId);
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ChatPage(
+              chatId: chatId,
+            )));
   }
 }

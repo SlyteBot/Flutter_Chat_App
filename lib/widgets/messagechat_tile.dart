@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_chat_app/providers/chat_provider.dart';
+import 'package:flutter_project_chat_app/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class MessageChatTile extends StatefulWidget {
   const MessageChatTile({Key? key}) : super(key: key);
@@ -38,7 +41,11 @@ class _MessageChatTileState extends State<MessageChatTile> {
               width: 15,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<ChatProvider>().sendMessage(
+                    context.read<UserProvider>().getUID(), _controller.text);
+                _controller.text = "";
+              },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
               child: Icon(
                 Icons.send,
