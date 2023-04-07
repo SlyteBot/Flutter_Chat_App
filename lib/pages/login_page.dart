@@ -162,8 +162,11 @@ class _LoginPageState extends State<LoginPage> {
       form.save();
       await context.read<UserProvider>().signIn(email, password).then((value) {
         if (value == null) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (builder) => const HomePage()));
+          String uid = context.read<UserProvider>().getUID();
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (builder) => HomePage(
+                    uid: uid,
+                  )));
         } else {
           setState(() {
             _isLoading = false;

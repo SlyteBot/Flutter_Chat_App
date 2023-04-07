@@ -23,6 +23,7 @@ class Chats {
   static const collectionName = "chats";
   static const name = "name";
   static const members = "members";
+  static const isDM = "isDM";
 }
 
 class Messages {

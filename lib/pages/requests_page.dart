@@ -13,7 +13,8 @@ import '../widgets/widgets.dart';
 import 'login_page.dart';
 
 class RequestsPage extends StatefulWidget {
-  const RequestsPage({Key? key}) : super(key: key);
+  final String userId;
+  const RequestsPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<RequestsPage> createState() => _RequestsPageState();
@@ -21,19 +22,6 @@ class RequestsPage extends StatefulWidget {
 
 class _RequestsPageState extends State<RequestsPage> {
   static const index = 2;
-  late Stream<QuerySnapshot> requests;
-  @override
-  void initState() {
-    requests = getSnapshot();
-    super.initState();
-  }
-
-  getSnapshot() {
-    return context
-        .read<RequestProvider>()
-        .fetch(context.read<UserProvider>().getUID());
-  }
-
   void addFriendDialog(BuildContext context) {
     String userName = "";
     showDialog(
@@ -130,40 +118,45 @@ class _RequestsPageState extends State<RequestsPage> {
         ),
         drawer: getDrawer(index, context),
         body: SafeArea(
-          child: StreamBuilder(
-              stream: requests,
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                      child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
-                  ));
-                }
+          child: Consumer<RequestProvider>(
+            builder: (context, value, child) {
+              return StreamBuilder(
+                  stream: value.fetch(widget.userId),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: Theme.of(context).primaryColor,
+                      ));
+                    }
 
-                if (snapshot.hasData) {
-                  if (snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text("You have no requests!"));
-                  }
-                  return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        return RequestTile(
-                            request: RequestModel(
-                          senderUid: snapshot.data!.docs[index]
-                              .get(Requests.senderUid),
-                          receiverUid: snapshot.data!.docs[index]
-                              .get(Requests.receiverUid),
-                          accepted:
-                              snapshot.data!.docs[index].get(Requests.accepted),
-                          acknowleged: snapshot.data!.docs[index]
-                              .get(Requests.acknowleged),
-                          documentId: snapshot.data!.docs[index].id,
-                        ));
-                      });
-                } else {
-                  return const Center(child: Text("You have no requests!"));
-                }
-              }),
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return const Center(
+                            child: Text("You have no requests!"));
+                      }
+                      return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            return RequestTile(
+                                request: RequestModel(
+                              senderUid: snapshot.data!.docs[index]
+                                  .get(Requests.senderUid),
+                              receiverUid: snapshot.data!.docs[index]
+                                  .get(Requests.receiverUid),
+                              accepted: snapshot.data!.docs[index]
+                                  .get(Requests.accepted),
+                              acknowleged: snapshot.data!.docs[index]
+                                  .get(Requests.acknowleged),
+                              documentId: snapshot.data!.docs[index].id,
+                            ));
+                          });
+                    } else {
+                      return const Center(child: Text("You have no requests!"));
+                    }
+                  });
+            },
+          ),
         ));
   }
 }

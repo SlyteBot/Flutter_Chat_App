@@ -174,8 +174,11 @@ class _RegisterPageState extends State<RegisterPage> {
           .register(userName, email, password)
           .then((value) {
         if (value == null) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (builder) => const HomePage()));
+          String uid = context.read<UserProvider>().getUID();
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (builder) => HomePage(
+                    uid: uid,
+                  )));
         } else {
           setState(() {
             _isLoading = false;

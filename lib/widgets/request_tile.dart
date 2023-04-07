@@ -5,6 +5,8 @@ import 'package:flutter_project_chat_app/providers/request_provider.dart';
 import 'package:flutter_project_chat_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/friend_provider.dart';
+
 class RequestTile extends StatefulWidget {
   final RequestModel request;
 
@@ -15,25 +17,6 @@ class RequestTile extends StatefulWidget {
 }
 
 class _RequestTileState extends State<RequestTile> {
-  String username = "";
-
-  getUsername() {
-    context
-        .read<UserProvider>()
-        .getUsernameByUid(widget.request.senderUid)
-        .then((value) {
-      setState(() {
-        username = value!;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    getUsername();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,13 +29,33 @@ class _RequestTileState extends State<RequestTile> {
             Icons.person_2_rounded,
             size: 35,
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 2,
-            child: Text(
-              username,
-              style: const TextStyle(fontSize: 35),
-              textWidthBasis: TextWidthBasis.parent,
-            ),
+          Consumer<FriendProvider>(
+            builder: (context, value, child) {
+              return FutureBuilder(
+                future: value.getUsernameByUid(widget.request.senderUid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width - 115,
+                      child: const Text(
+                        "",
+                        style: TextStyle(fontSize: 35),
+                        textWidthBasis: TextWidthBasis.parent,
+                      ),
+                    );
+                  }
+
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width - 115,
+                    child: Text(
+                      snapshot.data!,
+                      style: const TextStyle(fontSize: 35),
+                      textWidthBasis: TextWidthBasis.parent,
+                    ),
+                  );
+                },
+              );
+            },
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             OutlinedButton(

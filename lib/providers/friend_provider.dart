@@ -16,4 +16,9 @@ class FriendProvider with ChangeNotifier {
     DatabaseService databaseService = DatabaseService();
     return await databaseService.createChat(userUid, friendUid);
   }
+
+  Future<String?> getUsernameByUid(String uid) async {
+    DatabaseService databaseService = DatabaseService();
+    return await databaseService.getUsername(uid);
+  }
 }

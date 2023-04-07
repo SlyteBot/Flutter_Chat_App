@@ -12,6 +12,7 @@ import '../services/auth_service.dart';
 getDrawer(int index, context) {
   final pagesIndex = [0, 1, 2];
   String userName = Provider.of<UserProvider>(context).getUsername();
+  String uid = Provider.of<UserProvider>(context).getUID();
   return Drawer(
     child: SafeArea(
       child: ListView(
@@ -57,7 +58,10 @@ getDrawer(int index, context) {
                   return;
                 }
                 Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const HomePage()),
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(
+                              uid: uid,
+                            )),
                     (route) => false);
               },
               selected: index == pagesIndex[0],
@@ -79,7 +83,9 @@ getDrawer(int index, context) {
                 }
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                        builder: (context) => const FriendsPage()),
+                        builder: (context) => FriendsPage(
+                              userId: uid,
+                            )),
                     (route) => false);
               },
               leading: const Icon(Icons.person),
@@ -101,7 +107,9 @@ getDrawer(int index, context) {
                 }
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                        builder: (context) => const RequestsPage()),
+                        builder: (context) => RequestsPage(
+                              userId: uid,
+                            )),
                     (route) => false);
               },
               leading: const Icon(Icons.contact_mail),

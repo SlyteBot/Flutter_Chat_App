@@ -139,8 +139,40 @@ class DatabaseService {
     var chat = await db.collection(Chats.collectionName).add(ChatModel(
           members: [userUid, friendUid],
           name: "",
+          isDM: true,
         ).firestoreModel());
     return chat.id;
+  }
+
+  getChatStream(String chatId) {
+    return db
+        .collection(Chats.collectionName)
+        .doc(chatId)
+        .collection(Messages.collectionName)
+        .snapshots();
+  }
+
+  getChatName(String chatId, String uid) async {
+    final DocumentSnapshot chatDocument =
+        await db.collection(Chats.collectionName).doc(chatId).get();
+    if (!chatDocument.get(Chats.isDM)) {
+      return chatDocument.get(Chats.name);
+    }
+    List members = chatDocument.get(Chats.members);
+    String? friendUID;
+    for (String userID in members) {
+      if (userID != uid) {
+        friendUID = userID;
+      }
+    }
+    return await getUsername(friendUID!);
+  }
+
+  getUsersChat(String uid) {
+    return db
+        .collection(Chats.collectionName)
+        .where(Chats.members, arrayContains: uid)
+        .snapshots();
   }
 
   sendMessageToChat(String userUid, String chatId, String message) {

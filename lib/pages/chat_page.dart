@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/models/message_model.dart';
+import 'package:flutter_project_chat_app/providers/chat_provider.dart';
 import 'package:flutter_project_chat_app/widgets/message_tile.dart';
 import 'package:flutter_project_chat_app/widgets/messagechat_tile.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   final String chatId;
-  const ChatPage({Key? key, required this.chatId}) : super(key: key);
+  final String userId;
+  const ChatPage({Key? key, required this.chatId, required this.userId})
+      : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -39,26 +43,14 @@ class _ChatPageState extends State<ChatPage> {
           child: SizedBox(
         height: MediaQuery.of(context).size.height / 1.35,
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: false),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: false),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: false),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: false),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: true),
-              MessageTile(messageData: data, sendByMe: false),
-              MessageTile(messageData: data, sendByMe: true),
-            ],
-          ),
-        ),
+            child: Consumer<ChatProvider>(builder: (context, value, _) {
+          return StreamBuilder(
+            stream: value.getChatStream(),
+            builder: (context, snapshot) {
+              return Container();
+            },
+          );
+        })),
       )),
     );
   }

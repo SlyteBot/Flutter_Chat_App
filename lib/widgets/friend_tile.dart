@@ -14,25 +14,6 @@ class FriendTile extends StatefulWidget {
 }
 
 class _FriendTileState extends State<FriendTile> {
-  String username = "";
-
-  setUsername() {
-    context
-        .read<UserProvider>()
-        .getUsernameByUid(widget.friendUid)
-        .then((value) {
-      setState(() {
-        username = value!;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    setUsername();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -78,13 +59,33 @@ class _FriendTileState extends State<FriendTile> {
             Icons.person_2_rounded,
             size: 35,
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width - 115,
-            child: Text(
-              username,
-              style: const TextStyle(fontSize: 35),
-              textWidthBasis: TextWidthBasis.parent,
-            ),
+          Consumer<FriendProvider>(
+            builder: (context, value, child) {
+              return FutureBuilder(
+                future: value.getUsernameByUid(widget.friendUid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width - 115,
+                      child: const Text(
+                        "",
+                        style: TextStyle(fontSize: 35),
+                        textWidthBasis: TextWidthBasis.parent,
+                      ),
+                    );
+                  }
+
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width - 115,
+                    child: Text(
+                      snapshot.data!,
+                      style: const TextStyle(fontSize: 35),
+                      textWidthBasis: TextWidthBasis.parent,
+                    ),
+                  );
+                },
+              );
+            },
           ),
           OutlinedButton(
               onPressed: () async {
@@ -100,10 +101,12 @@ class _FriendTileState extends State<FriendTile> {
   }
 
   switchToChat(String chatId) {
+    String userId = context.read<UserProvider>().getUID();
     context.read<ChatProvider>().setChatId(chatId);
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ChatPage(
               chatId: chatId,
+              userId: userId,
             )));
   }
 }

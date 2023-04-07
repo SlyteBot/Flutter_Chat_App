@@ -16,7 +16,8 @@ import '../widgets/widgets.dart';
 import 'home_page.dart';
 
 class FriendsPage extends StatefulWidget {
-  const FriendsPage({Key? key}) : super(key: key);
+  final String userId;
+  const FriendsPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<FriendsPage> createState() => _FriendsPageState();
@@ -134,34 +135,38 @@ class _FriendsPageState extends State<FriendsPage> {
       ),
       drawer: getDrawer(index, context),
       body: SafeArea(
-        child: StreamBuilder(
-          stream: friends,
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                  child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ));
-            }
-            if (snapshot.hasData) {
-              Map map = snapshot.data!.docs[0].get(Friends.friendList);
-              List friendsList = map.keys.toList();
-              if (friendsList.isNotEmpty) {
-                return ListView.builder(
-                    itemCount: friendsList.length,
-                    itemBuilder: (context, index) {
-                      return FriendTile(
-                        friendUid: friendsList[index],
-                      );
-                    });
-              } else {
+        child: Consumer<FriendProvider>(
+          builder: (context, value, child) {
+            return StreamBuilder(
+              stream: value.fetch(widget.userId),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
+                  ));
+                }
+                if (snapshot.hasData) {
+                  Map map = snapshot.data!.docs[0].get(Friends.friendList);
+                  List friendsList = map.keys.toList();
+                  if (friendsList.isNotEmpty) {
+                    return ListView.builder(
+                        itemCount: friendsList.length,
+                        itemBuilder: (context, index) {
+                          return FriendTile(
+                            friendUid: friendsList[index],
+                          );
+                        });
+                  } else {
+                    return const Center(
+                      child: Text("You have no friends!"),
+                    );
+                  }
+                }
                 return const Center(
                   child: Text("You have no friends!"),
                 );
-              }
-            }
-            return const Center(
-              child: Text("You have no friends!"),
+              },
             );
           },
         ),
