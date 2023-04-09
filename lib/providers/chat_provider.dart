@@ -13,11 +13,9 @@ class ChatProvider with ChangeNotifier {
     databaseService.sendMessageToChat(userUid, chatId!, message);
   }
 
-  getChatStream() {
-    if (chatId != null) {
-      DatabaseService databaseService = DatabaseService();
-      return databaseService.getChatStream(chatId!);
-    }
+  getChatStream(String chatId) {
+    DatabaseService databaseService = DatabaseService();
+    return databaseService.getChatStream(chatId);
   }
 
   getUsersChatStream(String uid) {
