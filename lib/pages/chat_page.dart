@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_project_chat_app/consts/collections_const.dart';
 import 'package:flutter_project_chat_app/models/message_model.dart';
 import 'package:flutter_project_chat_app/providers/chat_provider.dart';
@@ -20,10 +21,6 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
-    MessageModel data = MessageModel(
-        timeStamp: DateTime.now().subtract(const Duration(days: 1)),
-        senderUid: "test",
-        message: "Pelda uzenet");
     return Scaffold(
       bottomSheet: const MessageChatTile(),
       appBar: AppBar(
@@ -84,21 +81,23 @@ class _ChatPageState extends State<ChatPage> {
               messages.sort((a, b) {
                 Timestamp aTime = a.get(Messages.timeStamp);
                 Timestamp btime = b.get(Messages.timeStamp);
-                return aTime.compareTo(btime);
+                return -aTime.compareTo(btime);
               });
               return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    return MessageTile(
-                      messageData: MessageModel(
-                          message: messages[index].get(Messages.message),
-                          senderUid: messages[index].get(Messages.senderUid),
-                          timeStamp: (messages[index].get(Messages.timeStamp))
-                              .toDate()),
-                      sendByMe: (widget.userId ==
-                          messages[index].get(Messages.senderUid)),
-                    );
-                  });
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  return MessageTile(
+                    messageData: MessageModel(
+                        message: messages[index].get(Messages.message),
+                        senderUid: messages[index].get(Messages.senderUid),
+                        timeStamp:
+                            (messages[index].get(Messages.timeStamp)).toDate()),
+                    sendByMe: (widget.userId ==
+                        messages[index].get(Messages.senderUid)),
+                  );
+                },
+                reverse: true,
+              );
             },
           );
         }),
