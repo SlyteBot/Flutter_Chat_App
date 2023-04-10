@@ -25,6 +25,7 @@ getDrawer(int index, context) {
             onTap: () {
               print("User pressed");
             },
+            onLongPress: () {},
             child: Column(
               children: [
                 const Icon(

@@ -210,6 +210,13 @@ class DatabaseService {
   }
 
   createChat(String userUid, String friendUid) async {
+    var querySnapshot = await db
+        .collection(Chats.collectionName)
+        .where(Chats.isDM, isEqualTo: true)
+        .where(Chats.members, arrayContainsAny: [userUid, friendUid]).get();
+    if (querySnapshot.size > 0) {
+      return querySnapshot.docs[0].id;
+    }
     var chat = await db.collection(Chats.collectionName).add(ChatModel(
           members: [userUid, friendUid],
           name: "",
@@ -257,5 +264,14 @@ class DatabaseService {
         .add(MessageModel(
                 timeStamp: DateTime.now(), senderUid: userUid, message: message)
             .firestoreModel());
+  }
+
+  deleteMessageFromChat(String chatId, String messageId) {
+    db
+        .collection(Chats.collectionName)
+        .doc(chatId)
+        .collection(Messages.collectionName)
+        .doc(messageId)
+        .delete();
   }
 }

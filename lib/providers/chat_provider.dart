@@ -13,6 +13,11 @@ class ChatProvider with ChangeNotifier {
     databaseService.sendMessageToChat(userUid, chatId!, message);
   }
 
+  deleteMessage(String chatId, String messageId) {
+    DatabaseService databaseService = DatabaseService();
+    databaseService.deleteMessageFromChat(chatId, messageId);
+  }
+
   getChatStream(String chatId) {
     DatabaseService databaseService = DatabaseService();
     return databaseService.getChatStream(chatId);

@@ -94,6 +94,8 @@ class _ChatPageState extends State<ChatPage> {
                             (messages[index].get(Messages.timeStamp)).toDate()),
                     sendByMe: (widget.userId ==
                         messages[index].get(Messages.senderUid)),
+                    messageId: messages[index].id,
+                    chatId: widget.chatId,
                   );
                 },
                 reverse: true,
