@@ -6,11 +6,9 @@ class FriendProvider with ChangeNotifier {
 
   fetch(String userUid) {
     DatabaseService databaseService = DatabaseService();
-    databaseService.deleteRequestsAndAddFriends(userUid);
+    databaseService.deleteRequestsAndProcess(userUid);
     return databaseService.getFriendsSnapshot(userUid);
   }
-
-  deleteFriend(String userUid, String friendUid) {}
 
   startChat(String userUid, String friendUid) async {
     DatabaseService databaseService = DatabaseService();

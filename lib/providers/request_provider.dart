@@ -7,7 +7,7 @@ class RequestProvider with ChangeNotifier {
 
   fetch(String userUid) {
     DatabaseService databaseService = DatabaseService();
-    databaseService.deleteRequestsAndAddFriends(userUid);
+    databaseService.deleteRequestsAndProcess(userUid);
     return databaseService.getRequestNotAcknowlgedSnapShot(userUid);
   }
 
@@ -25,9 +25,15 @@ class RequestProvider with ChangeNotifier {
     databaseService.updateRequest(request);
   }
 
-  sendRequest(String uid, String userName) async {
+  sendRequest(String uid, String userName, bool delete) async {
     DatabaseService databaseService = DatabaseService();
-    var result = await databaseService.sendRequest(uid, userName);
+    var result = await databaseService.sendRequest(uid, userName, delete);
     return result;
+  }
+
+  deleteFriendRequest(String uid, String friendUid) async {
+    DatabaseService databaseService = DatabaseService();
+    await databaseService.deleteFriend(uid, friendUid);
+    return await databaseService.sendRequestWithUids(uid, friendUid, true);
   }
 }

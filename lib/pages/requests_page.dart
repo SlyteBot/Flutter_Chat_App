@@ -93,7 +93,7 @@ class _RequestsPageState extends State<RequestsPage> {
   sendRequest(String userName) {
     context
         .read<RequestProvider>()
-        .sendRequest(context.read<UserProvider>().getUID(), userName)
+        .sendRequest(context.read<UserProvider>().getUID(), userName, false)
         .then((result) {
       if (result == true) {
         showSnackbar(context, Colors.green, "Request sent succesfully!");
@@ -148,6 +148,8 @@ class _RequestsPageState extends State<RequestsPage> {
                                   .get(Requests.accepted),
                               acknowleged: snapshot.data!.docs[index]
                                   .get(Requests.acknowleged),
+                              delete: snapshot.data!.docs[index]
+                                  .get(Requests.delete),
                               documentId: snapshot.data!.docs[index].id,
                             ));
                           });

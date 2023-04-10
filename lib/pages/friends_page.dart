@@ -25,19 +25,6 @@ class FriendsPage extends StatefulWidget {
 
 class _FriendsPageState extends State<FriendsPage> {
   static const index = 1;
-  late Stream<QuerySnapshot> friends;
-
-  getFriendsSnapshot() {
-    friends = context
-        .read<FriendProvider>()
-        .fetch(context.read<UserProvider>().getUID());
-  }
-
-  @override
-  void initState() {
-    getFriendsSnapshot();
-    super.initState();
-  }
 
   void addFriendDialog(BuildContext context) {
     String userName = "";
@@ -110,7 +97,7 @@ class _FriendsPageState extends State<FriendsPage> {
   sendRequest(String userName) {
     context
         .read<RequestProvider>()
-        .sendRequest(context.read<UserProvider>().getUID(), userName)
+        .sendRequest(context.read<UserProvider>().getUID(), userName, false)
         .then((result) {
       if (result == true) {
         showSnackbar(context, Colors.green, "Request sent succesfully!");

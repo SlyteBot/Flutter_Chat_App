@@ -8,11 +8,13 @@ class RequestModel {
   String receiverUid;
   bool accepted;
   bool acknowleged;
+  bool delete;
   RequestModel(
       {required this.senderUid,
       required this.receiverUid,
       required this.accepted,
       required this.acknowleged,
+      required this.delete,
       this.documentId});
 
   firestoreModel() {
@@ -20,7 +22,8 @@ class RequestModel {
       Requests.senderUid: senderUid,
       Requests.receiverUid: receiverUid,
       Requests.accepted: accepted,
-      Requests.acknowleged: acknowleged
+      Requests.acknowleged: acknowleged,
+      Requests.delete: delete
     };
   }
 

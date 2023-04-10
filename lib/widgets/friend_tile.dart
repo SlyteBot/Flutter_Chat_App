@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project_chat_app/pages/chat_page.dart';
 import 'package:flutter_project_chat_app/providers/chat_provider.dart';
 import 'package:flutter_project_chat_app/providers/friend_provider.dart';
+import 'package:flutter_project_chat_app/providers/request_provider.dart';
 import 'package:flutter_project_chat_app/providers/user_provider.dart';
+import 'package:flutter_project_chat_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class FriendTile extends StatefulWidget {
@@ -40,7 +42,8 @@ class _FriendTileState extends State<FriendTile> {
                       )),
                   IconButton(
                       onPressed: () {
-                        context.read<FriendProvider>().deleteFriend(
+                        Navigator.of(context).pop();
+                        context.read<RequestProvider>().deleteFriendRequest(
                             context.read<UserProvider>().getUID(),
                             widget.friendUid);
                       },

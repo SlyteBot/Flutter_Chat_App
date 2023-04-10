@@ -11,6 +11,7 @@ class Requests {
   static const receiverUid = "receiver";
   static const accepted = "accepted";
   static const acknowleged = "acknowleged";
+  static const delete = "delete";
 }
 
 class Friends {

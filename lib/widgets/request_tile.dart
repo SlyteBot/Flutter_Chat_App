@@ -36,7 +36,7 @@ class _RequestTileState extends State<RequestTile> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return SizedBox(
-                      width: MediaQuery.of(context).size.width - 115,
+                      width: MediaQuery.of(context).size.width - 185,
                       child: const Text(
                         "",
                         style: TextStyle(fontSize: 35),
@@ -46,7 +46,7 @@ class _RequestTileState extends State<RequestTile> {
                   }
 
                   return SizedBox(
-                    width: MediaQuery.of(context).size.width - 115,
+                    width: MediaQuery.of(context).size.width - 185,
                     child: Text(
                       snapshot.data!,
                       style: const TextStyle(fontSize: 35),
