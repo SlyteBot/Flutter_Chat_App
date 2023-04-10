@@ -59,6 +59,17 @@ class UserProvider with ChangeNotifier {
     return await databaseService.getUsername(uid);
   }
 
+  Future<bool> changeUsername(String userName) async {
+    DatabaseService databaseService = DatabaseService();
+    var result = await databaseService.changeUsername(getUID(), userName);
+    if (result) {
+      _userData!.userName = userName;
+      notifyListeners();
+    }
+    return result;
+  }
+
+  deleteAccount() {}
   String getUsername() {
     return _userData!.userName;
   }

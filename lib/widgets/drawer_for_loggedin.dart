@@ -9,9 +9,114 @@ import '../pages/requests_page.dart';
 import '../providers/user_provider.dart';
 import '../services/auth_service.dart';
 
+void changeUsernameDialog(BuildContext context) {
+  String userName = "";
+  showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: AlertDialog(
+            title: const Text(
+              "Change your username!",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  onChanged: (value) {
+                    userName = value;
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              Material(
+                child: MaterialButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22)),
+                  color: Theme.of(context).primaryColor,
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+              Material(
+                child: MaterialButton(
+                  color: Theme.of(context).primaryColor,
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    context.read<UserProvider>().changeUsername(userName);
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22)),
+                  child: const Text(
+                    "Change",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      });
+}
+
+void deleteAccountDialog(context) {
+  showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            "Account Deletion",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+          ),
+          content: const Text("Are you sure you want to delete your account?"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(
+                  Icons.cancel,
+                  color: Colors.red,
+                )),
+            IconButton(
+                onPressed: () {
+                  context.read<UserProvider>().deleteAccount();
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                      (route) => false);
+                },
+                icon: const Icon(
+                  Icons.done,
+                  color: Colors.green,
+                )),
+          ],
+        );
+      });
+}
+
 getDrawer(int index, context) {
   final pagesIndex = [0, 1, 2];
-  String userName = Provider.of<UserProvider>(context).getUsername();
+
   String uid = Provider.of<UserProvider>(context).getUID();
   return Drawer(
     child: SafeArea(
@@ -23,9 +128,11 @@ getDrawer(int index, context) {
           ),
           GestureDetector(
             onTap: () {
-              print("User pressed");
+              changeUsernameDialog(context);
             },
-            onLongPress: () {},
+            onLongPress: () {
+              deleteAccountDialog(context);
+            },
             child: Column(
               children: [
                 const Icon(
@@ -35,12 +142,16 @@ getDrawer(int index, context) {
                 const SizedBox(
                   height: 15,
                 ),
-                Text(
-                  userName,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 25,
-                  ),
+                Consumer<UserProvider>(
+                  builder: (context, value, child) {
+                    return Text(
+                      value.getUsername(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 25,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

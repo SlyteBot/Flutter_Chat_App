@@ -29,6 +29,17 @@ class DatabaseService {
     }
   }
 
+  doesUserExistByUid(String uid) async {
+    final usersRef = db.collection(Users.collectionName);
+    final query = usersRef.where(Users.userName, isEqualTo: uid);
+    final querySnapshot = await query.get();
+    if (querySnapshot.size == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   Future<String?> getUID(String userName) async {
     final usersRef = db.collection(Users.collectionName);
     final query = usersRef.where(Users.userName, isEqualTo: userName);
@@ -51,12 +62,65 @@ class DatabaseService {
     return user.get(Users.userName);
   }
 
+  changeUsername(String uid, String newUserName) async {
+    if (await doesUserExist(newUserName)) {
+      return false;
+    }
+    final queryUser = await db
+        .collection(Users.collectionName)
+        .where(Users.uid, isEqualTo: uid)
+        .get();
+    if (queryUser.size <= 0) {
+      return;
+    }
+    db
+        .collection(Users.collectionName)
+        .doc(queryUser.docs[0].id)
+        .update({Users.userName: newUserName});
+    return true;
+  }
+
   Future<bool> updateRequest(RequestModel request) async {
     db
         .collection(Requests.collectionName)
         .doc(request.documentId)
         .update(request.firestoreModel());
     return true;
+  }
+
+  deleteUser(String uid) async {
+    final queryUser = await db
+        .collection(Users.collectionName)
+        .where(Users.uid, isEqualTo: uid)
+        .get();
+    if (queryUser.size <= 0) {
+      return;
+    }
+    db.collection(Users.collectionName).doc(queryUser.docs[0].id).delete();
+    final queryFriends = await db
+        .collection(Friends.collectionName)
+        .where(Friends.currentUid, isEqualTo: uid)
+        .get();
+    final Map mapFriend = queryFriends.docs[0].get(Friends.friendList);
+
+    for (String friendUid in mapFriend.keys) {
+      sendRequestWithUids(uid, friendUid, true);
+    }
+    db.collection(Friends.collectionName).doc(queryFriends.docs[0].id).delete();
+    final queryChats = await db
+        .collection(Chats.collectionName)
+        .where(Chats.members, arrayContains: uid)
+        .get();
+    if (queryChats.size > 0) {
+      for (QueryDocumentSnapshot doc in queryChats.docs) {
+        List members = doc.get(Chats.members);
+        members.remove(uid);
+        db
+            .collection(Chats.collectionName)
+            .doc(doc.id)
+            .update({Chats.members: members});
+      }
+    }
   }
 
   Future<bool> sendRequest(
@@ -199,6 +263,9 @@ class DatabaseService {
       await deleteFriend(userUid, document.get(Requests.senderUid));
 
       requestRef.doc(document.id).update({Requests.acknowleged: true});
+      if (!doesUserExistByUid(document.get(Requests.senderUid))) {
+        requestRef.doc(document.id).delete();
+      }
     }
   }
 
@@ -246,7 +313,15 @@ class DatabaseService {
         friendUID = userID;
       }
     }
-    return await getUsername(friendUID!);
+
+    if (friendUID != null) {
+      bool exist = await doesUserExistByUid(friendUID);
+      if (exist) {
+        return await getUsername(friendUID);
+      }
+    }
+
+    return getUsername(uid);
   }
 
   getUsersChat(String uid) {
