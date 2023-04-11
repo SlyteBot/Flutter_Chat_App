@@ -31,7 +31,7 @@ class DatabaseService {
 
   doesUserExistByUid(String uid) async {
     final usersRef = db.collection(Users.collectionName);
-    final query = usersRef.where(Users.userName, isEqualTo: uid);
+    final query = usersRef.where(Users.uid, isEqualTo: uid);
     final querySnapshot = await query.get();
     if (querySnapshot.size == 0) {
       return false;
@@ -103,8 +103,22 @@ class DatabaseService {
         .get();
     final Map mapFriend = queryFriends.docs[0].get(Friends.friendList);
 
+    final queryUserRequest = await db
+        .collection(Requests.collectionName)
+        .where(Requests.senderUid, isEqualTo: uid)
+        .get();
+    for (DocumentSnapshot doc in queryUserRequest.docs) {
+      db.collection(Requests.collectionName).doc(doc.id).delete();
+    }
+    final queryUserRequest2 = await db
+        .collection(Requests.collectionName)
+        .where(Requests.receiverUid, isEqualTo: uid)
+        .get();
+    for (DocumentSnapshot doc in queryUserRequest2.docs) {
+      db.collection(Requests.collectionName).doc(doc.id).delete();
+    }
     for (String friendUid in mapFriend.keys) {
-      sendRequestWithUids(uid, friendUid, true);
+      await sendRequestWithUids(uid, friendUid, true);
     }
     db.collection(Friends.collectionName).doc(queryFriends.docs[0].id).delete();
     final queryChats = await db
@@ -263,7 +277,7 @@ class DatabaseService {
       await deleteFriend(userUid, document.get(Requests.senderUid));
 
       requestRef.doc(document.id).update({Requests.acknowleged: true});
-      if (!doesUserExistByUid(document.get(Requests.senderUid))) {
+      if (!await doesUserExistByUid(document.get(Requests.senderUid))) {
         requestRef.doc(document.id).delete();
       }
     }
@@ -280,9 +294,14 @@ class DatabaseService {
     var querySnapshot = await db
         .collection(Chats.collectionName)
         .where(Chats.isDM, isEqualTo: true)
-        .where(Chats.members, arrayContainsAny: [userUid, friendUid]).get();
+        .where(Chats.members, arrayContains: userUid)
+        .get();
     if (querySnapshot.size > 0) {
-      return querySnapshot.docs[0].id;
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        if (doc.get(Chats.members).contains(friendUid)) {
+          return doc.id;
+        }
+      }
     }
     var chat = await db.collection(Chats.collectionName).add(ChatModel(
           members: [userUid, friendUid],
@@ -348,5 +367,20 @@ class DatabaseService {
         .collection(Messages.collectionName)
         .doc(messageId)
         .delete();
+  }
+
+  deleteMemberFromChat(String chatId, String uid) async {
+    final chatDoc = await db.collection(Chats.collectionName).doc(chatId).get();
+
+    List members = chatDoc.get(Chats.members);
+    if (members.length == 1) {
+      db.collection(Chats.collectionName).doc(chatId).delete();
+    } else {
+      members.remove(uid);
+      db
+          .collection(Chats.collectionName)
+          .doc(chatId)
+          .update({Chats.members: members});
+    }
   }
 }

@@ -59,7 +59,7 @@ class AuthService {
 
   deleteAccount() async {
     DatabaseService databaseService = DatabaseService();
-    databaseService.deleteUser(firebaseAuth.currentUser!.uid);
+    await databaseService.deleteUser(firebaseAuth.currentUser!.uid);
     firebaseAuth.currentUser!.delete();
   }
 }

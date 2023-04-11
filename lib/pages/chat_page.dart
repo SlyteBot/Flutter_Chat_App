@@ -22,7 +22,8 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: const MessageChatTile(),
+      resizeToAvoidBottomInset: true,
+      //bottomSheet: const MessageChatTile(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         title: Row(
@@ -64,45 +65,58 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: SafeArea(
-          child: SizedBox(
-        height: MediaQuery.of(context).size.height / 1.35,
-        child: Consumer<ChatProvider>(builder: (context, value, _) {
-          return StreamBuilder(
-            stream: value.getChatStream(widget.chatId),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (!snapshot.hasData) {
-                return Container();
-              }
-              List<QueryDocumentSnapshot> messages =
-                  snapshot.data!.docs.toList();
-              messages.sort((a, b) {
-                Timestamp aTime = a.get(Messages.timeStamp);
-                Timestamp btime = b.get(Messages.timeStamp);
-                return -aTime.compareTo(btime);
-              });
-              return ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return MessageTile(
-                    messageData: MessageModel(
-                        message: messages[index].get(Messages.message),
-                        senderUid: messages[index].get(Messages.senderUid),
-                        timeStamp:
-                            (messages[index].get(Messages.timeStamp)).toDate()),
-                    sendByMe: (widget.userId ==
-                        messages[index].get(Messages.senderUid)),
-                    messageId: messages[index].id,
-                    chatId: widget.chatId,
-                  );
-                },
-                reverse: true,
-              );
-            },
-          );
-        }),
+          child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.74,
+              child: Consumer<ChatProvider>(builder: (context, value, _) {
+                return StreamBuilder(
+                  stream: value.getChatStream(widget.chatId),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData) {
+                      return Container();
+                    }
+                    List<QueryDocumentSnapshot> messages =
+                        snapshot.data!.docs.toList();
+                    messages.sort((a, b) {
+                      Timestamp aTime = a.get(Messages.timeStamp);
+                      Timestamp btime = b.get(Messages.timeStamp);
+                      return -aTime.compareTo(btime);
+                    });
+                    return ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        return MessageTile(
+                          messageData: MessageModel(
+                              message: messages[index].get(Messages.message),
+                              senderUid:
+                                  messages[index].get(Messages.senderUid),
+                              timeStamp:
+                                  (messages[index].get(Messages.timeStamp))
+                                      .toDate()),
+                          sendByMe: (widget.userId ==
+                              messages[index].get(Messages.senderUid)),
+                          messageId: messages[index].id,
+                          chatId: widget.chatId,
+                        );
+                      },
+                      reverse: true,
+                    );
+                  },
+                );
+              }),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.12,
+              child: const MessageChatTile(),
+            )
+          ],
+        ),
       )),
     );
   }

@@ -18,6 +18,11 @@ class ChatProvider with ChangeNotifier {
     databaseService.deleteMessageFromChat(chatId, messageId);
   }
 
+  deleteChat(String chatId, String uid) {
+    DatabaseService databaseService = DatabaseService();
+    databaseService.deleteMemberFromChat(chatId, uid);
+  }
+
   getChatStream(String chatId) {
     DatabaseService databaseService = DatabaseService();
     return databaseService.getChatStream(chatId);
@@ -25,6 +30,7 @@ class ChatProvider with ChangeNotifier {
 
   getUsersChatStream(String uid) {
     DatabaseService databaseService = DatabaseService();
+    databaseService.deleteRequestsAndProcess(uid);
     return databaseService.getUsersChat(uid);
   }
 

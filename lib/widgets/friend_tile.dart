@@ -77,7 +77,16 @@ class _FriendTileState extends State<FriendTile> {
                       ),
                     );
                   }
-
+                  if (snapshot.data == null) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width - 115,
+                      child: const Text(
+                        "",
+                        style: TextStyle(fontSize: 35),
+                        textWidthBasis: TextWidthBasis.parent,
+                      ),
+                    );
+                  }
                   return SizedBox(
                     width: MediaQuery.of(context).size.width - 115,
                     child: Text(

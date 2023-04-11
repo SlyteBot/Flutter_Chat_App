@@ -23,6 +23,42 @@ class _ChatTileState extends State<ChatTile> {
       onTap: () {
         switchToChat(widget.chatId, widget.uid);
       },
+      onLongPress: () {
+        showDialog(
+            barrierDismissible: true,
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text(
+                  "Leave this chat",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                ),
+                content:
+                    const Text("Are you sure you want to leave this chat?"),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.cancel,
+                        color: Colors.red,
+                      )),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        context
+                            .read<ChatProvider>()
+                            .deleteChat(widget.chatId, widget.uid);
+                      },
+                      icon: const Icon(
+                        Icons.done,
+                        color: Colors.green,
+                      )),
+                ],
+              );
+            });
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
         child: Row(children: [

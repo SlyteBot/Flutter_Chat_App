@@ -69,7 +69,11 @@ class UserProvider with ChangeNotifier {
     return result;
   }
 
-  deleteAccount() {}
+  deleteAccount() {
+    AuthService authService = AuthService();
+    authService.deleteAccount();
+  }
+
   String getUsername() {
     return _userData!.userName;
   }
